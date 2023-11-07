@@ -20,14 +20,7 @@ We are essentially replacing the calculator here [https://rusa.org/octime_acp.ht
 
 The outline of the algorithm is as follows:
 
-Depending on the control location, we can expect the minimum and maximum speed (km/hour) to change as a result of this distance. Here si the table used to keep track of these values. 
-
-Control location (km)	Minimum Speed (km/hr)	Maximum Speed (km/hr)
-0 - 200		15	34
-200 - 400	15	32
-400 - 600	15	30
-600 - 1000	11.428	28
-1000 - 1300	13.333	26
+Depending on the control location, we can expect the minimum and maximum speed (km/hour) to change as a result of this distance. Refer to the table here [https://rusa.org/pages/acp-brevet-control-times-calculator](https://rusa.org/pages/acp-brevet-control-times-calculator).
 
 The open time is calculate by dividing control distance by the maximum speed. The algorithm can be generalized as (control distance - (previous interval)) / (current maximum speed) + (last intervals control distance - previous interval) / (last intervals maximum speed) + ...
 
