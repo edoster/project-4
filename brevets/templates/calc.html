@@ -74,6 +74,7 @@
                appropriate for something that really is a table, like this
                one.  We allocate it the full 12 columns of the bootstrap grid.
                -->
+            <div id="error_message"></div>
             <div class="row">
                <div class="col-md-12">
                   <table class="control_time_table">
@@ -103,6 +104,7 @@
                         <td><input name="close" type="datetime-local" readonly value="" /></td>
                         <!-- Notes (error messages for this row) -->
                         <td class="notes"> &nbsp; </td>
+                        <input type="hidden" name="control_dist" value="">
                      </tr>
                      {% endfor %}
                   </table>
@@ -121,10 +123,14 @@
             // View flask_brevets.py for details.
             function calc_times(control) {
               var km = control.find("input[name='km']").val();
+              var mi = control.find("input[name='miles']").val();
               var open_time_field = control.find("input[name='open']");
               var close_time_field = control.find("input[name='close']");
+              var brevet_dist = $("#brevet_dist_km").val();
+              var begin_date = $("#begin_date").val();
+              //var begin_date = control.find("input[name='begin_date']").val();
 
-              $.getJSON(TIME_CALC_URL, {km: km}).done(
+              $.getJSON(TIME_CALC_URL, {km: km, distance: brevet_dist, begin_date: begin_date}).done(
                 function(data) {
                    var times = data.result;
                    console.log("Got a response: ");
@@ -133,6 +139,11 @@
                    // so don't worry about those.
                    open_time_field.val(moment(times.open).format("YYYY-MM-DDTHH:mm"));
                    close_time_field.val(moment(times.close).format("YYYY-MM-DDTHH:mm"));
+                   if (times.failure) {
+                     $("#error_message").text("The control distance cannot exceed the total Brevet distance, try again")
+                     open_time_field.val("");
+                     close_time_field.val("");
+                   }
                  }
                ).fail(function(err){
                  // In case you get an error...
@@ -151,6 +162,7 @@
                        console.log("Converted " + miles + " miles to " + km + " kilometers");
                        var control_entry = $(this).parents(".control")
                        var target = control_entry.find("input[name='km']");
+                       //var brevet_dist = $(this).parents(".control").find("input[name='distance']");
                        target.val( km );
                        // Then calculate times for this entry
                        calc_times(control_entry);
@@ -163,6 +175,7 @@
                        console.log("Converted " + km + " km to " + miles + " miles");
                        var control_entry = $(this).parents(".control")
                        var target = control_entry.find("input[name='miles']");
+                       //var brevet_dist = $(this).parents(".control").find("input[name='distance']");
                        target.val( miles );
                        // Then calculate times for this entry
                        calc_times(control_entry);
